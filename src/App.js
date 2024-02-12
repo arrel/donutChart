@@ -1,25 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
+import DonutChart from './donutChart';
 
-function App() {
+export default function Home() {
+  const colors = ["#FFC800", "#8162C4", "#6334C8"];
+  const sections = {
+    sections: [
+      { percentage: 50, color: colors[0], animation: "rotate", title: "Primer Foundation Scholarship", subtitle: "$8,960" },
+      { percentage: 20, color: colors[1], animation: "grow" ,title: "Primer Tuition", subtitle: "$18,500" },
+      { percentage: 30, color: colors[2], animation: "grow" ,title: "Family Responsibility", subtitle: "$8,280" },
+    ],
+    config: { height: 1, delay: 1000 },
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{width: '100vw', height: '100vh' }}>
+      <DonutChart graph={sections} />
     </div>
   );
 }
-
-export default App;

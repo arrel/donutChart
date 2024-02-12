@@ -7,7 +7,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.chart_card_container {
+  display: flex;
+  width: 10rem;
+  height: auto;
+  padding: 10px 10px;
+  /* border-width: 2rem; */
+  /* border-color: black; */
+  border: 2px solid; 
+  border-radius: 10px;
+  flex-direction: column;
+  background-color: #ffffff80;
+  pointer-events: none;
 }
+
+.chart_card_subtitle{
+  font-size: 1.5rem;
+}
+.chart_card_title{
+  font-size: 1rem;
+  font-weight: bold;
+}
+
