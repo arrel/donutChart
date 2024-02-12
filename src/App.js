@@ -9,12 +9,8 @@ export default function Home() {
       { percentage: 20, color: colors[1], animation: "grow", title: "Primer Tuition", subtitle: "$18,500" },
       { percentage: 30, color: colors[2], animation: "grow", title: "Family Responsibility", subtitle: "$8,280" },
     ],
-    config: {
-      height: 1,
-      delay: 1000,
-      outerRadius: 2,
-      innerRadius: 5,
-    },
+    config: { height: 1,
+      delay: 1000, outerRadius: 2, innerRadius: 1 },
   };
   const springConfig = {
     mass: 10,
