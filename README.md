@@ -2,6 +2,8 @@
 
 The `DonutChart` component is a React component that allows you to create interactive donut charts in a 3D environment using React Three Fiber and @react-three/drei.
 
+![example](./public/img_3.png)
+
 ## Installation
 
 To use the `DonutChart` component in your React application, you can install it from npm:
@@ -66,6 +68,10 @@ export default function Home() {
   - `mass`: The mass of the chart
   - `tension`: The tension in the spring
   - `friction`: The damping force
+
+
+<img src="./public/img_1.png" alt="Image 1" style="width: 400px; height: auto;"/> 
+<img src="./public/img_2.png" alt="Image 1" style="width: 400px; height: auto;"/> 
 
 ## All Rights Reserved
 
