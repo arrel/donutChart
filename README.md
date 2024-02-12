@@ -17,27 +17,35 @@ yarn add @react-three/fiber @react-three/drei three three-csg-ts
 Here's an example of how to use the `DonutChart` component:
 
 ```jsx
-import React from 'react';
-import DonutChart from 'path/to/DonutChart';
+import "./App.css";
+import DonutChart from "./donutChart";
 
-const MyComponent = () => {
-  const graphData = {
+export default function Home() {
+  const colors = ["#FFC800", "#8162C4", "#6334C8"];
+  const sections = {
     sections: [
-      { percentage: 30, color: '#ff0000', animation: 'rotate', title: 'Section 1', subtitle: 'Subtitle 1' },
-      { percentage: 50, color: '#00ff00', animation: 'grow', title: 'Section 2', subtitle: 'Subtitle 2' },
-      // Add more sections as needed
+      { percentage: 50, color: colors[0], animation: "rotate", title: "Primer Foundation Scholarship", subtitle: "$8,960" },
+      { percentage: 20, color: colors[1], animation: "grow", title: "Primer Tuition", subtitle: "$18,500" },
+      { percentage: 30, color: colors[2], animation: "grow", title: "Family Responsibility", subtitle: "$8,280" },
     ],
     config: {
-      delay: 1000, // Delay between animations (in milliseconds)
+      height: 1,
+      delay: 1000,
+      outerRadius: 2,
+      innerRadius: 5,
     },
   };
-
+  const springConfig = {
+    mass: 10,
+    tension: 100,
+    firction: 40,
+  };
   return (
-    <DonutChart graph={graphData} />
+    <div style={{ width: "100vw", height: "100vh" }}>
+      <DonutChart graph={sections} springConfig={springConfig} />
+    </div>
   );
-};
-
-export default MyComponent;
+}
 ```
 
 ## Props
@@ -53,7 +61,11 @@ export default MyComponent;
     - `delay`: Delay between animations (in milliseconds).
     - `height`: The height of the graph
     - `outerRadius`: The size of the graph
-    - `holeRadius`: The radius of the hole
+    - `innerRadius`: The radius of the hole
+- `springConfig`: Object to control the behaviour of the chart movement. It supports following parameters:
+  - `mass`: The mass of the chart
+  - `tension`: The tension in the spring
+  - `friction`: The damping force
 
 ## All Rights Reserved
 
@@ -61,4 +73,4 @@ This software is proprietary and confidential. All rights are reserved by the au
 
 You are not allowed to distribute, sublicense, or modify the software in any way without prior written permission from the author.
 
-For licensing inquiries, please contact haseebkhalidoriginal@gmail.com
+For licensing inquiries, please contact <haseebkhalidoriginal@gmail.com>
