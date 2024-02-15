@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { OrthographicCamera, PresentationControls, Html } from "@react-three/drei";
+import { OrthographicCamera, PresentationControls, Html, Billboard } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -60,7 +60,7 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               {value.center ? (
                 <></>
               ) : (
-                <Html position={[Math.sin(startAngle + length / 2) * 2, 0, Math.cos(startAngle + length / 2) * 2]} zIndexRange={[100, 0]}>
+                <Html position={[Math.cos((startAngle + length) / 2) , 0, Math.sin((startAngle + length) / 2) ]} zIndexRange={[100, 0]}>
                   <div style={{ borderColor: value.color, opacity: opacity }} className="chart_card_container">
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <div className="chart_card_title">{value.title}</div>
@@ -89,12 +89,15 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               {!value.center ? (
                 <></>
               ) : (
-                <Html position={[Math.sin(startAngle + length / 2) * -1.6, 0, Math.cos(startAngle + length / 2) * -2]} zIndexRange={[100, 0]}>
+                  <Billboard position={[0, 0, 0.5]}>
+                <Html position={[-graph.config.outerRadius + 0.4, 0, 0]} zIndexRange={[100, 0]}>
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: opacity }}>
                     <div style={{fontWeight: 'bold', fontSize: '1rem', textAlign: 'center', width: '20rem' }}>{ value.title }</div>
                     <div style={{fontSize: '2rem', fontWeight: 'normal', color: 'gray'}}>{value.subtitle}</div>
                     </div>
                 </Html>
+
+                  </Billboard>
               )}
             </group>
           );
