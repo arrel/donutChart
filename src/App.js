@@ -6,8 +6,8 @@ export default function Home() {
   const sections = {
     sections: [
       { percentage: 20, color: colors[0], animation: "rotate", title: "Primer Foundation Scholarship", subtitle: "$8,960" },
-      { percentage: 20, color: colors[1], animation: "grow", title: "Primer Tuition", subtitle: "$18,500" },
-      { percentage: 60, color: colors[2], animation: "grow", title: "Family Responsibility", subtitle: "$8,280" },
+      { percentage: 20, color: colors[1], animation: "rotate", title: "Primer Tuition", subtitle: "$18,500", center: true },
+      { percentage: 60, color: colors[2], animation: "rotate", title: "Family Responsibility", subtitle: "$8,280" },
     ],
     config: { height: 1,
       delay: 1000, outerRadius: 2, innerRadius: 1 },
