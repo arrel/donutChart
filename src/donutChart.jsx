@@ -39,8 +39,8 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
     }, graph.config.delay * graph.sections.length);
   }, []);
   return (
-    <Canvas style={{ width: "100%", height: "100%" }} {...props} ref={(el) => (canvasRef.current = el)} >
-      <PresentationControls config={springConfig} domElement={canvasRef.current} rotation={[rotation, 0, 0]}  >
+    <Canvas style={{ width: "100%", height: "100%" }} {...props} ref={(el) => (canvasRef.current = el)}>
+      <PresentationControls config={springConfig} domElement={canvasRef.current} rotation={[rotation, 0, 0]}>
         {graph.sections.map((value, i) => {
           const startAngle = (totalCovered * Math.PI * 2) / 100;
           const length = (value.percentage * Math.PI * 2) / 100;
@@ -60,7 +60,7 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               {value.center ? (
                 <></>
               ) : (
-                <Html position={[Math.cos((startAngle + length) / 2) , 0, Math.sin((startAngle + length) / 2) ]} zIndexRange={[100, 0]}>
+                <Html position={[Math.cos((startAngle + length) / 2), 0, Math.cos(startAngle)]} zIndexRange={[100, 0]}>
                   <div style={{ borderColor: value.color, opacity: opacity }} className="chart_card_container">
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <div className="chart_card_title">{value.title}</div>
@@ -89,15 +89,14 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               {!value.center ? (
                 <></>
               ) : (
-                  <Billboard position={[0, 0, 0.5]}>
-                <Html position={[-graph.config.outerRadius + 0.4, 0, 0]} zIndexRange={[100, 0]}>
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: opacity }}>
-                    <div style={{fontWeight: 'bold', fontSize: '1rem', textAlign: 'center', width: '20rem' }}>{ value.title }</div>
-                    <div style={{fontSize: '2rem', fontWeight: 'normal', color: 'gray'}}>{value.subtitle}</div>
+                <Billboard position={[0, 0, 0.5]}>
+                  <Html position={[-graph.config.outerRadius + 0.4, 0, 0]} zIndexRange={[100, 0]}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: opacity }}>
+                      <div style={{ fontWeight: "bold", fontSize: "1rem", textAlign: "center", width: "20rem" }}>{value.title}</div>
+                      <div style={{ fontSize: "2rem", fontWeight: "normal", color: "gray" }}>{value.subtitle}</div>
                     </div>
-                </Html>
-
-                  </Billboard>
+                  </Html>
+                </Billboard>
               )}
             </group>
           );
