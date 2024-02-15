@@ -28,10 +28,11 @@ function springAnimation(end, setFunction = (e) => console.log("please give a se
 }
 const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 100 }, ...props }) => {
   let totalCovered = 0;
+  const canvasRef = useRef();
   const [closed, setClosed] = useState(Array.from({ length: graph.sections.length }).fill(true));
   return (
-    <Canvas style={{ width: "100%", height: "100%" }} {...props}>
-      <PresentationControls rotation={[Math.PI / 3, -Math.PI / 2, 0]} config={springConfig}>
+    <Canvas style={{ width: "100%", height: "100%" }} {...props} ref={el => canvasRef.current = el}>
+      <PresentationControls rotation={[Math.PI / 3, -Math.PI / 2, 0]} config={springConfig} domElement={canvasRef.current}>
         {graph.sections.map((value, i) => {
           const startAngle = (totalCovered * Math.PI * 2) / 100;
           const length = (value.percentage * Math.PI * 2) / 100;
@@ -108,28 +109,29 @@ const Section = ({
   innerRadius = 1,
 }) => {
   const meshRef = useRef();
+  const res = 32;
   useEffect(() => {
     if (!meshRef.current) return;
     let outer, inner, animationTarget;
     let initialValue = 0;
     if (animationType === "rotate") {
       animationTarget = thetaLength;
-      outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, height, 16, 16, false, thetaStart, initialValue));
-      inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, height, 16, 16, false, thetaStart, initialValue));
+      outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, height, res, 1, false, thetaStart, initialValue));
+      inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, height, res, 1, false, thetaStart, initialValue));
     } else if (animationType === "grow") {
       animationTarget = height;
-      outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, initialValue, 16, 16, false, thetaStart, thetaLength));
-      inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, initialValue, 16, 16, false, thetaStart, thetaLength));
+      outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, initialValue, 1, 128, false, thetaStart, thetaLength));
+      inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, initialValue, 1, 128, false, thetaStart, thetaLength));
     }
     const updateDonut = (animatedValue) => {
       outer.geometry.dispose();
       inner.geometry.dispose();
       if (animationType === "grow") {
-        outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, animatedValue, 16, 16, false, thetaStart, thetaLength);
-        inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, animatedValue, 16, 16, false, thetaStart, thetaLength);
+        outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, animatedValue, res, 1, false, thetaStart, thetaLength);
+        inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, animatedValue, res, 1, false, thetaStart, thetaLength);
       } else if (animationType === "rotate") {
-        outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, height, 16, 16, false, thetaStart, animatedValue);
-        inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, height, 16, 16, false, thetaStart, animatedValue);
+        outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, height, res, 1, false, thetaStart, animatedValue);
+        inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, height, res, 1, false, thetaStart, animatedValue);
       }
       outer.geometry.needsUpdate = true;
       inner.geometry.needsUpdate = true;
