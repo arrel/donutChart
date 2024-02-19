@@ -5,7 +5,12 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { CSG } from "three-csg-ts";
 
-function springAnimation(end, setFunction = (e) => console.log("please give a set function"), stiffness = 0.2, damping = 0.5) {
+function springAnimation(
+  end,
+  setFunction = (e) => console.log("please give a set function"),
+  stiffness = 0.2,
+  damping = 0.5
+) {
   let position = 0;
   let velocity = 0;
 
@@ -26,7 +31,9 @@ function springAnimation(end, setFunction = (e) => console.log("please give a se
 
   animate();
 }
+
 const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 100 }, ...props }) => {
+  THREE.ColorManagement.enabled = true;
   let totalCovered = 0;
   const canvasRef = useRef();
   const [closed, setClosed] = useState(Array.from({ length: graph.sections.length }).fill(true));
@@ -39,16 +46,24 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
     }, graph.config.delay * graph.sections.length);
   }, []);
   return (
-    <Canvas style={{ width: "100%", height: "100%" }} {...props} ref={(el) => (canvasRef.current = el)}>
+    <Canvas
+      style={{ width: "100%", height: "100%" }}
+      {...props}
+      ref={(el) => (canvasRef.current = el)}
+      gl={{
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.6,
+        outputEncoding: THREE.LinearSRGBColorSpace,
+      }}
+    >
       <PresentationControls config={springConfig} domElement={canvasRef.current} rotation={[rotation, 0, 0]}>
         {graph.sections.map((value, i) => {
           const startAngle = (totalCovered * Math.PI * 2) / 100;
           const length = (value.percentage * Math.PI * 2) / 100;
           totalCovered += value.percentage;
           return (
-            <group>
+            <group key={i}>
               <Section
-                key={i}
                 thetaStart={startAngle}
                 thetaLength={length}
                 color={value.color}
@@ -62,26 +77,36 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               ) : (
                 <Html position={[Math.cos((startAngle + length) / 2), 0, Math.cos(startAngle)]} zIndexRange={[100, 0]}>
                   <div style={{ borderColor: value.color, opacity: opacity }} className="chart_card_container">
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        pointerEvents: "all",
+                        cursor: "pointer",
+                      }}
+                      onClick={() =>
+                        setClosed((state) => {
+                          const newState = [...state];
+                          newState[i] = !newState[i];
+                          return newState;
+                        })
+                      }
+                    >
                       <div className="chart_card_title">{value.title}</div>
-                      <div
-                        onClick={() =>
-                          setClosed((state) => {
-                            const newState = [...state];
-                            newState[i] = !newState[i];
-                            return newState;
-                          })
-                        }
-                        style={{ pointerEvents: "all", cursor: "pointer" }}
-                      >
-                        {closed[i] ? "▼" : "▲"}
-                      </div>
+                      <div>{closed[i] ? "▼" : "▲"}</div>
                     </div>
                     <div
                       className="chart_card_subtitle"
-                      style={{ height: closed[i] ? "0" : "auto", transition: "height 0.5s ease-in-out", overflow: "hidden" }}
+                      style={{
+                        height: closed[i] ? "0" : "auto",
+                        transition: "height 0.5s ease-in-out",
+                        overflow: "hidden",
+                      }}
                     >
                       {value.subtitle}
+                      <p style={{ fontSize: 12 }}>
+                        Hi, this is some more info about the thing. Does this fit in the space?
+                      </p>
                     </div>
                   </div>
                 </Html>
@@ -91,8 +116,24 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
               ) : (
                 <Billboard position={[0, 0, 0.5]}>
                   <Html position={[-graph.config.outerRadius + 0.4, 0, 0]} zIndexRange={[100, 0]}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: opacity }}>
-                      <div style={{ fontWeight: "bold", fontSize: "1rem", textAlign: "center", width: "20rem" }}>{value.title}</div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        opacity: opacity,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1rem",
+                          textAlign: "center",
+                          width: "20rem",
+                        }}
+                      >
+                        {value.title}
+                      </div>
                       <div style={{ fontSize: "2rem", fontWeight: "normal", color: "gray" }}>{value.subtitle}</div>
                     </div>
                   </Html>
@@ -102,8 +143,8 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
           );
         })}
       </PresentationControls>
-      <ambientLight intensity={3} />
-      <directionalLight position={[1, 1, 0]} intensity={1} />
+      <ambientLight intensity={2} />
+      <directionalLight position={[0, 0, 1]} intensity={1.5} />
       <spotLight position={[0, 3, 0]} />
       <OrthographicCamera
         makeDefault
@@ -121,7 +162,18 @@ const DonutChart = ({ graph, springConfig = { mass: 8, tension: 150, firction: 1
 };
 
 const Section = React.memo(
-  ({ thetaStart, thetaLength, color, animationType, height = 1, stiffness = 0.1, damping = 0.8, delay = 0, outerRadius = 2, innerRadius = 1 }) => {
+  ({
+    thetaStart,
+    thetaLength,
+    color,
+    animationType,
+    height = 1,
+    stiffness = 0.2,
+    damping = 1,
+    delay = 0,
+    outerRadius = 2,
+    innerRadius = 1,
+  }) => {
     const meshRef = useRef();
     const res = 32;
     useEffect(() => {
@@ -130,22 +182,66 @@ const Section = React.memo(
       let initialValue = 0;
       if (animationType === "rotate") {
         animationTarget = thetaLength;
-        outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, height, res, 1, false, thetaStart, initialValue));
-        inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, height, res, 1, false, thetaStart, initialValue));
+        outer = new THREE.Mesh(
+          new THREE.CylinderGeometry(outerRadius, outerRadius, height, res, 1, false, thetaStart, initialValue)
+        );
+        inner = new THREE.Mesh(
+          new THREE.CylinderGeometry(innerRadius, innerRadius, height, res, 1, false, thetaStart, initialValue)
+        );
       } else if (animationType === "grow") {
         animationTarget = height;
-        outer = new THREE.Mesh(new THREE.CylinderGeometry(outerRadius, outerRadius, initialValue, res, 1, false, thetaStart, thetaLength));
-        inner = new THREE.Mesh(new THREE.CylinderGeometry(innerRadius, innerRadius, initialValue, res, 1, false, thetaStart, thetaLength));
+        outer = new THREE.Mesh(
+          new THREE.CylinderGeometry(outerRadius, outerRadius, initialValue, res, 1, false, thetaStart, thetaLength)
+        );
+        inner = new THREE.Mesh(
+          new THREE.CylinderGeometry(innerRadius, innerRadius, initialValue, res, 1, false, thetaStart, thetaLength)
+        );
       }
       const updateDonut = (animatedValue) => {
         outer.geometry.dispose();
         inner.geometry.dispose();
         if (animationType === "grow") {
-          outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, animatedValue, res, 1, false, thetaStart, thetaLength);
-          inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, animatedValue, res, 1, false, thetaStart, thetaLength);
+          outer.geometry = new THREE.CylinderGeometry(
+            outerRadius,
+            outerRadius,
+            animatedValue,
+            res,
+            1,
+            false,
+            thetaStart,
+            thetaLength
+          );
+          inner.geometry = new THREE.CylinderGeometry(
+            innerRadius,
+            innerRadius,
+            animatedValue,
+            res,
+            1,
+            false,
+            thetaStart,
+            thetaLength
+          );
         } else if (animationType === "rotate") {
-          outer.geometry = new THREE.CylinderGeometry(outerRadius, outerRadius, height, res, 1, false, thetaStart, animatedValue);
-          inner.geometry = new THREE.CylinderGeometry(innerRadius, innerRadius, height, res, 1, false, thetaStart, animatedValue);
+          outer.geometry = new THREE.CylinderGeometry(
+            outerRadius,
+            outerRadius,
+            height,
+            res,
+            1,
+            false,
+            thetaStart,
+            animatedValue
+          );
+          inner.geometry = new THREE.CylinderGeometry(
+            innerRadius,
+            innerRadius,
+            height,
+            res,
+            1,
+            false,
+            thetaStart,
+            animatedValue
+          );
         }
         outer.geometry.needsUpdate = true;
         inner.geometry.needsUpdate = true;
@@ -172,7 +268,7 @@ const Section = React.memo(
         <meshStandardMaterial color={color} />
       </mesh>
     );
-  },
+  }
 );
 
 export default DonutChart;
